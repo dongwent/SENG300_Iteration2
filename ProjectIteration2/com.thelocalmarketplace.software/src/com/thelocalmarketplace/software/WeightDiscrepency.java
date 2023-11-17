@@ -27,7 +27,8 @@ public class WeightDiscrepency implements ElectronicScaleListener{
 	public void theMassOnTheScaleHasChanged(IElectronicScale scale, Mass mass) {
 		if (!scale.isDisabled() & StartSession.getInSession()) {
 			
-			if (mass.difference(StartSession.getExpectedMass()).abs().compareTo(scale.getSensitivityLimit()) >= 0) {
+			if (mass.difference(StartSession.getExpectedMass()).abs().
+					compareTo(scale.getSensitivityLimit()) >= 0) {
 				StartSession.getStation().scanningArea.disable();
 				StartSession.getStation().cardReader.disable();
 				StartSession.getStation().mainScanner.disable();
