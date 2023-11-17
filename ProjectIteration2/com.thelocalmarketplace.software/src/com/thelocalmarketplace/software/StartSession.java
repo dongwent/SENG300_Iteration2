@@ -93,7 +93,6 @@ public class StartSession {
 		if(inSession) {
 			throw new Exception();
 		}
-		station.turnOn();
 		thisStation = station;
 		shoppingCart.clear();
 		expectedMass = new Mass(0);		
@@ -106,8 +105,10 @@ public class StartSession {
 	 * @param station The self checkout station where the session was ended.
 	 */
 	public static void endSession(AbstractSelfCheckoutStation station) {
-		inSession = false;
-		station.turnOff();
+		if (thisStation == station) {
+			thisStation = null;
+			inSession = false;
+		}
 	}
 	
 }
