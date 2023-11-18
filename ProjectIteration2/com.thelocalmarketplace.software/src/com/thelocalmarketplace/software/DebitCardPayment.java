@@ -8,18 +8,14 @@ import com.jjjwelectronics.card.AbstractCardReader;
 import com.jjjwelectronics.card.Card;
 import com.jjjwelectronics.card.Card.CardData;
 import com.jjjwelectronics.card.CardReaderListener;
-import com.thelocalmarketplace.hardware.SelfCheckoutStationBronze;
 import com.thelocalmarketplace.hardware.external.CardIssuer;
 
 import powerutility.NoPowerException;
 
-public class DebitCardPayment extends AbstractCardReader{
-    private SelfCheckoutStationBronze station;
-    
-    private double amountAvailable;
+public class DebitCardPayment extends AbstractCardReader{    
+    private double holdAmount;
 
-    public DebitCardPayment(SelfCheckoutStationBronze station, CardIssuer bank) {
-        this.station = station;
+    public DebitCardPayment(CardIssuer bank) {
 
         CardReaderListener cardReaderListener = new CardReaderListener() {
 
@@ -44,26 +40,32 @@ public class DebitCardPayment extends AbstractCardReader{
             }
 
             @Override
-            public void aCardHasBeenSwiped() {}
+            public void aCardHasBeenSwiped() {
+                System.out.println("Card has been swiped.");
+            }
 
             @Override
             public void theDataFromACardHasBeenRead(CardData data) {
                 if (!data.getType().toLowerCase().equals("debit"))
                     throw new SecurityException("Invalid card type!");
-
-                if (bank.authorizeHold(data.getNumber(), amountAvailable) == -1) 
+                
+                if (bank.authorizeHold(data.getNumber(), holdAmount) == -1) 
                     throw new SecurityException("Transaction unauthorized!");
             }            
         };
 
-        station.cardReader.register(cardReaderListener);
+        StartSession.getStation().cardReader.register(cardReaderListener);
     }
 
-    public void swipeCard(Card card) throws IOException {
-        station.cardReader.swipe(card);
+    public void swipeCard(Card card, CardIssuer bank) throws IOException {
+        StartSession.getStation().cardReader.swipe(card);
+
+        Card.CardSwipeData data = card.new CardSwipeData();
+
+        bank.postTransaction(data.getNumber(), Double.valueOf(holdAmount).longValue(), StartSession.getExpectedPrice());
     }
 
-    public void setAmountAvailable(double num) {
-        amountAvailable = num;
+    public void setHoldAmount(double num) {
+        holdAmount = num;
     }
 }
