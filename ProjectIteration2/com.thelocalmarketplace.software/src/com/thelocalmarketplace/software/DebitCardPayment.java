@@ -51,7 +51,7 @@ public class DebitCardPayment extends AbstractCardReader{
                 if (!data.getType().toLowerCase().equals("debit"))
                     throw new SecurityException("Invalid card type!");
 
-                if (bank.authorizeHold(data.getNumber(), amountAvailable) == -1) {}
+                if (bank.authorizeHold(data.getNumber(), amountAvailable) == -1) 
                     throw new SecurityException("Transaction unauthorized!");
             }            
         };
