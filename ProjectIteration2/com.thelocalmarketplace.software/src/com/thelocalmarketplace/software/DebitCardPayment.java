@@ -13,7 +13,7 @@ import com.thelocalmarketplace.hardware.external.CardIssuer;
 import powerutility.NoPowerException;
 
 public class DebitCardPayment extends AbstractCardReader{    
-    private double holdAmount;
+    private long holdAmount;
 
     public DebitCardPayment(CardIssuer bank) {
 
@@ -51,21 +51,23 @@ public class DebitCardPayment extends AbstractCardReader{
                 
                 if (bank.authorizeHold(data.getNumber(), holdAmount) == -1) 
                     throw new SecurityException("Transaction unauthorized!");
+
+                if (!bank.postTransaction(data.getNumber(), 0, StartSession.getExpectedPrice()))
+                    throw new SecurityException("Unsuccessful transaction.");
+                StartSession.updateExpectedPrice(0);
             }            
         };
 
         StartSession.getStation().cardReader.register(cardReaderListener);
     }
 
-    public void swipeCard(Card card, CardIssuer bank) throws IOException {
+    public void swipeCard(Card card) throws IOException {
+        System.out.println("Total price before: " + StartSession.getExpectedPrice());
         StartSession.getStation().cardReader.swipe(card);
-
-        Card.CardSwipeData data = card.new CardSwipeData();
-
-        bank.postTransaction(data.getNumber(), Double.valueOf(holdAmount).longValue(), StartSession.getExpectedPrice());
+        System.out.println("Total price after: " + StartSession.getExpectedPrice());
     }
 
-    public void setHoldAmount(double num) {
+    public void setHoldAmount(long num) {
         holdAmount = num;
     }
 }
