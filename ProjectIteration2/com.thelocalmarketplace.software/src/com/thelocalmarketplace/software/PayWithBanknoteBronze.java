@@ -65,6 +65,10 @@ public class PayWithBanknoteBronze implements BanknoteValidatorObserver {
         amountDue = amountDue.subtract(banknoteValue);
     }
 
+    
+
+        
+
     private void dispenseChange() throws Exception {
         if (amountDue.compareTo(BigDecimal.ZERO) >= 0) {
             return; // No change required
@@ -72,25 +76,18 @@ public class PayWithBanknoteBronze implements BanknoteValidatorObserver {
 
         BigDecimal changeAmount = amountDue.negate();
 
-        private void dispenseChange() throws Exception {
-            if (amountDue.compareTo(BigDecimal.ZERO) >= 0) {
-                return; // No change required
-            }
-
-            BigDecimal changeAmount = amountDue.negate();
-
-            // Simplified logic to dispense change
-            while (changeAmount.compareTo(BigDecimal.ZERO) > 0) {
-                Banknote banknoteToDispense = selectBanknoteForChange(changeAmount);
-                if (banknoteToDispense != null) {
-                    dispenser.emit(); // Emit the banknote
-                    changeAmount = changeAmount.subtract(banknoteToDispense.getDenomination());
-                } else {
-                    // No suitable banknote available for dispensing
-                    throw new Exception("Unable to dispense the required change.");
-                }
+        // Simplified logic to dispense change
+        while (changeAmount.compareTo(BigDecimal.ZERO) > 0) {
+            Banknote banknoteToDispense = selectBanknoteForChange(changeAmount);
+            if (banknoteToDispense != null) {
+                dispenser.emit(); // Emit the banknote
+                changeAmount = changeAmount.subtract(banknoteToDispense.getDenomination());
+            } else {
+                // No suitable banknote available for dispensing
+                throw new Exception("Unable to dispense the required change.");
             }
         }
+    }
 
         private Banknote selectBanknoteForChange(BigDecimal changeAmount) {
             
