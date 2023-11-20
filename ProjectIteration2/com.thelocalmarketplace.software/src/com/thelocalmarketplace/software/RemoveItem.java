@@ -14,11 +14,12 @@ import com.thelocalmarketplace.hardware.external.ProductDatabases;
 
 public class RemoveItem {
 	
-	public static void removeProduct() {
+	public static void removeItem() {
 		if (!StartSession.getStation().baggingArea.isDisabled() & StartSession.getInSession()) {
 			
 			Scanner remover = new Scanner(System.in);
 			int i = 1;
+			
 			for (Item listItem: StartSession.getShoppingCart()) {
 				if (listItem instanceof BarcodedItem) {
 					System.out.println(i + ". " + ProductDatabases.BARCODED_PRODUCT_DATABASE.get(
@@ -33,29 +34,33 @@ public class RemoveItem {
 			System.out.println("List the number cooresponding to the item you would like to remove.");
 			int removedIndex = remover.nextInt();
 			
-			StartSession.updateExpectedMass(StartSession.getExpectedMass().difference(
-					StartSession.getShoppingCart().get(removedIndex - 1).getMass()).abs());
+			removeItem(StartSession.getShoppingCart().get(removedIndex - 1));
+		}	
+	}
+	
+	public static void removeItem(Item removedItem) {
+		if (!StartSession.getStation().baggingArea.isDisabled() & StartSession.getInSession()) {
 			
-			if (StartSession.getShoppingCart().get(removedIndex) instanceof BarcodedItem) {
+			StartSession.updateExpectedMass(StartSession.getExpectedMass().difference(
+					removedItem.getMass()).abs());
+			
+			if (removedItem instanceof BarcodedItem) {
 				
 				StartSession.updateExpectedPrice(StartSession.getExpectedPrice() - 
 						ProductDatabases.BARCODED_PRODUCT_DATABASE.get(
-						((BarcodedItem)StartSession.getShoppingCart().get(removedIndex))
-						.getBarcode()).getPrice());
+						((BarcodedItem)removedItem).getBarcode()).getPrice());
 				
-			} else if (StartSession.getShoppingCart().get(removedIndex) instanceof PLUCodedItem) {
+			} else if (removedItem instanceof PLUCodedItem) {
 				
 				StartSession.updateExpectedPrice(StartSession.getExpectedPrice() - 
-						StartSession.getShoppingCart().get(removedIndex - 1).getMass().inGrams()
-						.divide(BigDecimal.valueOf(1000)).multiply(
+						removedItem.getMass().inGrams().divide(BigDecimal.valueOf(1000)).multiply(
 						BigDecimal.valueOf(ProductDatabases.PLU_PRODUCT_DATABASE.get(
-						((PLUCodedItem)StartSession.getShoppingCart().get(removedIndex))
-						.getPLUCode()).getPrice())).longValue());
+						((PLUCodedItem)removedItem).getPLUCode()).getPrice())).longValue());
 				
 			}
 
 			System.out.println("Please remove the item from the bagging area.");
-		}	
+		}
 	}
 	
 }
