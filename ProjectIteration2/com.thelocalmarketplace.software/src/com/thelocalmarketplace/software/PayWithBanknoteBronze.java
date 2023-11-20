@@ -1,3 +1,4 @@
+
 package com.thelocalmarketplace.software;
 
 import com.tdc.IComponent;
@@ -26,7 +27,7 @@ public class PayWithBanknoteBronze implements BanknoteValidatorObserver {
         this.currency = currency;
         this.waitingForValidation = false;
 
-        // Register this class as an observer to the validator
+       
         validator.attach(this);
     }
 
@@ -49,7 +50,7 @@ public class PayWithBanknoteBronze implements BanknoteValidatorObserver {
         try {
             dispenseChange();
         } catch (Exception e) {
-            e.printStackTrace(); // Handle exception appropriately
+            e.printStackTrace(); 
         }
     }
 
@@ -58,8 +59,6 @@ public class PayWithBanknoteBronze implements BanknoteValidatorObserver {
         if (!waitingForValidation) return;
         waitingForValidation = false;
 
-        // Handle invalid banknote case
-        // This could involve notifying the user or taking other appropriate actions
     }
 
     private void updateTransactionTotal(BigDecimal banknoteValue) {
@@ -73,8 +72,38 @@ public class PayWithBanknoteBronze implements BanknoteValidatorObserver {
 
         BigDecimal changeAmount = amountDue.negate();
 
-        // Dispense change logic
-        // Implement based on your system's requirements
+        private void dispenseChange() throws Exception {
+            if (amountDue.compareTo(BigDecimal.ZERO) >= 0) {
+                return; // No change required
+            }
+
+            BigDecimal changeAmount = amountDue.negate();
+
+            // Simplified logic to dispense change
+            while (changeAmount.compareTo(BigDecimal.ZERO) > 0) {
+                Banknote banknoteToDispense = selectBanknoteForChange(changeAmount);
+                if (banknoteToDispense != null) {
+                    dispenser.emit(); // Emit the banknote
+                    changeAmount = changeAmount.subtract(banknoteToDispense.getDenomination());
+                } else {
+                    // No suitable banknote available for dispensing
+                    throw new Exception("Unable to dispense the required change.");
+                }
+            }
+        }
+
+        private Banknote selectBanknoteForChange(BigDecimal changeAmount) {
+            
+            if (changeAmount.compareTo(new BigDecimal("20")) >= 0) {
+                return new Banknote(currency, new BigDecimal("20"));
+            } else if (changeAmount.compareTo(new BigDecimal("10")) >= 0) {
+                return new Banknote(currency, new BigDecimal("10"));
+            } // ... add other denominations as needed
+            else {
+                return null; // No suitable denomination found
+            }
+        
+
     }
 
 	@Override
