@@ -32,7 +32,7 @@ public class DebitCardPaymentTest {
     private String cardCVV;
     
     private Card card;
-    private DebitCardPayment debitCard;
+    private DebitCardPayment debitCardPayment;
 
     BigDecimal[] denominations = {BigDecimal.valueOf(5), BigDecimal.valueOf(10), BigDecimal.valueOf(20)};
 
@@ -62,7 +62,7 @@ public class DebitCardPaymentTest {
         
         bank.addCardData(cardNumber, cardHolder, cardExpiryDate, cardCVV, 500);
 
-        debitCard = new DebitCardPayment(bank);
+        debitCardPayment = new DebitCardPayment(bank);
     }
 
     /**
@@ -122,7 +122,7 @@ public class DebitCardPaymentTest {
         StartSession.getStation().turnOn();
         StartSession.getStation().cardReader.disable();
 
-        debitCard.swipeCard(card);
+        debitCardPayment.swipeCard(card);
     }
 
     /**
@@ -136,7 +136,7 @@ public class DebitCardPaymentTest {
         StartSession.getStation().turnOff();
         StartSession.getStation().cardReader.enable();
 
-        debitCard.swipeCard(card);
+        debitCardPayment.swipeCard(card);
     }
 
     /**
@@ -155,8 +155,7 @@ public class DebitCardPaymentTest {
 
         StartSession.updateExpectedPrice(50);
         
-        debitCard.setHoldAmount(StartSession.getExpectedPrice());
-        debitCard.swipeCard(card);
+        debitCardPayment.swipeCard(card);
 
         // String[] lines = outputStreamCaptor.toString().split(System.lineSeparator());
 
@@ -181,7 +180,7 @@ public class DebitCardPaymentTest {
 
         card = new Card("credit", cardNumber, cardHolder, cardCVV);
 
-        debitCard.swipeCard(card);
+        debitCardPayment.swipeCard(card);
     }
 
     /**
@@ -195,9 +194,7 @@ public class DebitCardPaymentTest {
         StartSession.getStation().turnOn();
         StartSession.getStation().cardReader.enable();
 
-        debitCard.setHoldAmount(0);
-
-        debitCard.swipeCard(card);
+        debitCardPayment.swipeCard(card);
     }
 
     /**
@@ -213,11 +210,16 @@ public class DebitCardPaymentTest {
 
         CardIssuer bank2 = new CardIssuer("TD Bank", 500);
 
-        debitCard = new DebitCardPayment(bank2);
+        debitCardPayment = new DebitCardPayment(bank2);
 
-        debitCard.swipeCard(card);
+        debitCardPayment.swipeCard(card);
     }
 
+    /**
+     * test swipeCard() when runs successfully
+     * 
+     * @throws IOException
+     */
     @Test
     public void testSwipeCard1() throws IOException {
         StartSession.getStation().plugIn(PowerGrid.instance());
@@ -226,8 +228,7 @@ public class DebitCardPaymentTest {
 
         StartSession.updateExpectedPrice(50);
         
-        debitCard.setHoldAmount(StartSession.getExpectedPrice());
-        debitCard.swipeCard(card);
+        debitCardPayment.swipeCard(card);
     }
 
     /**
@@ -239,24 +240,83 @@ public class DebitCardPaymentTest {
     public void testSwipeCard2() throws IOException {
         StartSession.getStation().unplug();
 
-        debitCard.swipeCard(card);
+        debitCardPayment.swipeCard(card);
     }
 
-    @Test
-    public void testSwipeCard3() throws IOException {
+    /**
+     * Test swipeCard() when bank's card info does not match card info
+     * @throws Exception
+     */
+    @Test (expected = SecurityException.class)
+    public void testSwipeCard3() throws Exception {
+        StartSession.endSession(station);
+        SelfCheckoutStationBronze station1 = new SelfCheckoutStationBronze();
+        StartSession.startSession(station1);
         StartSession.getStation().plugIn(PowerGrid.instance());
         StartSession.getStation().turnOn();
         StartSession.getStation().cardReader.enable();
 
         StartSession.updateExpectedPrice(50);
 
-        CardIssuer bank2 = new CardIssuer("TD Bank", 1);
-
-        Card card2 = new Card("debit", "1234", cardHolder, cardCVV);
-        bank2.addCardData("1234", cardHolder, cardExpiryDate, cardCVV, 500);
+        bank = new CardIssuer("TD Bank", 1);
+        bank.addCardData("1234", cardHolder, cardExpiryDate, "423", 500);
+        debitCardPayment = new DebitCardPayment(bank);
         
-        DebitCardPayment debitCard2 = new DebitCardPayment(bank2);
-        debitCard2.setHoldAmount(StartSession.getExpectedPrice());
-        debitCard2.swipeCard(card2);
+        debitCardPayment.swipeCard(card);
+    }
+
+    /**
+     * Test swipeCard() with unexisting card
+     * 
+     * @throws IOException
+     */
+    @Test (expected = SecurityException.class)
+    public void testSwipeCard4() throws IOException {
+        StartSession.getStation().plugIn(PowerGrid.instance());
+        StartSession.getStation().turnOn();
+        StartSession.getStation().cardReader.enable();
+
+        StartSession.updateExpectedPrice(50);
+
+        card = new Card("debit", "1234", cardHolder, cardCVV);
+        
+        debitCardPayment.swipeCard(card);
+    }
+
+     /**
+     * Test swipeCard() when bank has no data of card
+     * @throws Exception
+     */
+    @Test (expected = SecurityException.class)
+    public void testSwipeCard5() throws Exception {
+        StartSession.endSession(station);
+        SelfCheckoutStationBronze station1 = new SelfCheckoutStationBronze();
+        StartSession.startSession(station1);
+        StartSession.getStation().plugIn(PowerGrid.instance());
+        StartSession.getStation().turnOn();
+        StartSession.getStation().cardReader.enable();
+
+        StartSession.updateExpectedPrice(50);
+
+        bank = new CardIssuer("TD Bank", 1);
+        
+        debitCardPayment = new DebitCardPayment(bank);
+        
+        debitCardPayment.swipeCard(card);
+    }
+
+    /**
+     * Test swipeCard() when card does not have enough money
+     * 
+     */
+    @Test (expected = SecurityException.class)
+    public void testSwipeCard6() throws IOException {
+        StartSession.getStation().plugIn(PowerGrid.instance());
+        StartSession.getStation().turnOn();
+        StartSession.getStation().cardReader.enable();
+
+        StartSession.updateExpectedPrice(1000);
+        
+        debitCardPayment.swipeCard(card);
     }
 }

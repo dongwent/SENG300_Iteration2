@@ -13,7 +13,6 @@ import com.thelocalmarketplace.hardware.external.CardIssuer;
 import powerutility.NoPowerException;
 
 public class DebitCardPayment extends AbstractCardReader{    
-    private long holdAmount;
 
     public DebitCardPayment(CardIssuer bank) {
 
@@ -49,7 +48,7 @@ public class DebitCardPayment extends AbstractCardReader{
                 if (!data.getType().toLowerCase().equals("debit"))
                     throw new SecurityException("Invalid card type!");
                 
-                if (bank.authorizeHold(data.getNumber(), holdAmount) == -1) 
+                if (bank.authorizeHold(data.getNumber(), StartSession.getExpectedPrice()) == -1) 
                     throw new SecurityException("Transaction unauthorized!");
 
                 if (!bank.postTransaction(data.getNumber(), 0, StartSession.getExpectedPrice()))
@@ -65,9 +64,5 @@ public class DebitCardPayment extends AbstractCardReader{
         System.out.println("Total price before: " + StartSession.getExpectedPrice());
         StartSession.getStation().cardReader.swipe(card);
         System.out.println("Total price after: " + StartSession.getExpectedPrice());
-    }
-
-    public void setHoldAmount(long num) {
-        holdAmount = num;
     }
 }
