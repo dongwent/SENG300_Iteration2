@@ -11,9 +11,19 @@ import com.thelocalmarketplace.hardware.PLUCodedProduct;
 import com.thelocalmarketplace.hardware.Product;
 import com.thelocalmarketplace.hardware.external.ProductDatabases;
 
-
+/**
+ * This class is for the remove item use case.
+ * Allows the customer to remove the specified item from their order.
+ * 
+ * @author Dongwen Tian
+ *
+ */
 public class RemoveItem {
 	
+	/**
+	 * This method is called to remove an item from the list
+	 * of items printed to the console.
+	 */
 	public static void removeItem() {
 		if (!StartSession.getStation().baggingArea.isDisabled() & StartSession.getInSession()) {
 			
@@ -38,6 +48,11 @@ public class RemoveItem {
 		}	
 	}
 	
+	/**
+	 * Removes the specified item from the order
+	 * 
+	 * @param removedItem the item to be removed.
+	 */
 	public static void removeItem(Item removedItem) {
 		if (!StartSession.getStation().baggingArea.isDisabled() & StartSession.getInSession()) {
 			

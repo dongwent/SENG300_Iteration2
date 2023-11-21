@@ -96,15 +96,26 @@ public class RemoveItemTest {
 	public void removeItemTest() {
 		Mass tempMass;
 		long tempPrice;
+		
 		StartSession.getStation().baggingArea.addAnItem(itemOne);
 		StartSession.getShoppingCart().add(itemOne);
+		
+		StartSession.updateExpectedMass(StartSession.getExpectedMass().sum(itemOne.getMass()));
+		StartSession.updateExpectedPrice(StartSession.getExpectedPrice() + ProductDatabases.BARCODED_PRODUCT_DATABASE.get(itemOne.getBarcode()).getPrice());
+		
 		tempMass = StartSession.getExpectedMass();
 		tempPrice = StartSession.getExpectedPrice();
+		
 		StartSession.getStation().baggingArea.addAnItem(itemTwo);
 		StartSession.getShoppingCart().add(itemTwo);
+		
+		StartSession.updateExpectedMass(StartSession.getExpectedMass().sum(itemTwo.getMass()));
+		StartSession.updateExpectedPrice(StartSession.getExpectedPrice() + ProductDatabases.BARCODED_PRODUCT_DATABASE.get(itemTwo.getBarcode()).getPrice());
+		
 		RemoveItem.removeItem(itemTwo);
-		StartSession.getStation().baggingArea.removeAnItem(itemTwo);4
-		assertTrue(StartSession.getExpectedMass().compareTo(tempMass) == 0 & (StartSession.getExpectedPrice() == tempPrice);		
+		StartSession.getStation().baggingArea.removeAnItem(itemTwo);
+		
+		assertTrue(StartSession.getExpectedMass().compareTo(tempMass) == 0 & (StartSession.getExpectedPrice() == tempPrice));		
 		
 	}
 }

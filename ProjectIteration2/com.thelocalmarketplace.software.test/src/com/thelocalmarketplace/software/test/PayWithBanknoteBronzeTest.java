@@ -1,11 +1,18 @@
-package com.thelocalmarketplace.software;
+package com.thelocalmarketplace.software.test;
 
-import com.tdc.banknote.*;
+import static org.junit.Assert.*;
+
 import java.math.BigDecimal;
 import java.util.Currency;
 
+import org.junit.Test;
+
+import com.tdc.banknote.Banknote;
+import com.thelocalmarketplace.software.PayWithBanknoteBronze;
+
 public class PayWithBanknoteBronzeTest {
-    public static void main(String[] args) {
+
+	public static void main(String[] args) {
         Currency currency = Currency.getInstance("USD");
         BigDecimal initialAmountDue = BigDecimal.valueOf(100);
 
@@ -32,4 +39,5 @@ public class PayWithBanknoteBronzeTest {
         }
 
     }
+
 }
