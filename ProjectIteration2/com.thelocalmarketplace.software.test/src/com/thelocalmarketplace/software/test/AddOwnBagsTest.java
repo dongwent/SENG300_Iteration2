@@ -24,7 +24,7 @@ import powerutility.PowerGrid;
 public class AddOwnBagsTest extends AddItemViaBarcodeTest {
 
     AddOwnBagsTest useCase;
-    Item bag;
+    AddOwnBagsTest bag;
 
     // Setting up use cases.
     @Before
@@ -34,14 +34,14 @@ public class AddOwnBagsTest extends AddItemViaBarcodeTest {
 
     @Test
     public void testBagsAdded() {
-        bag = new Item(34.0);
+        bag = new AddOwnBagsTest();
         useCase.WeightDiscrepancyTest.baggingAreaControl.add(bag);
         assertTrue("place bag in bagging area.", useCase.bagsAdded);
     }
 
     @Test
     public void testWeightOverloadException() throws Exception {
-        bag = new Bag(444444);
+        bag = new AddOwnBagsTest();
         useCase.WeightDiscrepancy.baggingAreaControl.add(bag);
         useCase.WeightDiscrepancy.baggingAreaControl.getExpectedWeight();
     }
