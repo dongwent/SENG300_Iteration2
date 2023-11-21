@@ -10,7 +10,7 @@ import java.util.Calendar;
 import java.util.Currency;
 import java.util.Locale;
 
-import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import com.jjjwelectronics.card.Card;
@@ -23,21 +23,21 @@ import powerutility.NoPowerException;
 import powerutility.PowerGrid;
 
 public class DebitCardPaymentTest {
-    private SelfCheckoutStationBronze station;
+    private static SelfCheckoutStationBronze station;
     
-    private CardIssuer bank;
-    private String cardNumber;
-    private String cardHolder;
-    private Calendar cardExpiryDate;
-    private String cardCVV;
+    private static CardIssuer bank;
+    private static String cardNumber;
+    private static String cardHolder;
+    private static Calendar cardExpiryDate;
+    private static String cardCVV;
     
-    private Card card;
-    private DebitCardPayment debitCardPayment;
+    private static Card card;
+    private static DebitCardPayment debitCardPayment;
 
-    BigDecimal[] denominations = {BigDecimal.valueOf(5), BigDecimal.valueOf(10), BigDecimal.valueOf(20)};
+    private static BigDecimal[] denominations = {BigDecimal.valueOf(5), BigDecimal.valueOf(10), BigDecimal.valueOf(20)};
 
-    @Before
-    public void setUp() throws Exception {
+    @BeforeClass
+    public static void setUp() throws Exception {
         SelfCheckoutStationBronze.configureCurrency(Currency.getInstance(Locale.CANADA));
         SelfCheckoutStationBronze.configureBanknoteDenominations(denominations);
         SelfCheckoutStationBronze.configureCoinDenominations(denominations);
@@ -146,8 +146,8 @@ public class DebitCardPaymentTest {
      */
     @Test
     public void testListenerCardSwipe() throws IOException {
-        // ByteArrayOutputStream outputStreamCaptor = new ByteArrayOutputStream();
-        // System.setOut(new PrintStream(outputStreamCaptor));
+        ByteArrayOutputStream outputStreamCaptor = new ByteArrayOutputStream();
+        System.setOut(new PrintStream(outputStreamCaptor));
 
         StartSession.getStation().plugIn(PowerGrid.instance());
         StartSession.getStation().turnOn();
@@ -157,14 +157,14 @@ public class DebitCardPaymentTest {
         
         debitCardPayment.swipeCard(card);
 
-        // String[] lines = outputStreamCaptor.toString().split(System.lineSeparator());
+        String[] lines = outputStreamCaptor.toString().split(System.lineSeparator());
 
-        // String expectedOutput = "Card has been swiped.";
+        String expectedOutput = "Card has been swiped.";
 
-        // System.setOut(System.out);
+        System.setOut(System.out);
 
-        // // Assert the expected output
-        // assertEquals(expectedOutput, lines[2]);
+        // Assert the expected output
+        assertEquals(expectedOutput, lines[2]);
     }
 
     /**
@@ -278,9 +278,9 @@ public class DebitCardPaymentTest {
 
         StartSession.updateExpectedPrice(50);
 
-        card = new Card("debit", "1234", cardHolder, cardCVV);
+        Card card2 = new Card("debit", "1234", cardHolder, cardCVV);
         
-        debitCardPayment.swipeCard(card);
+        debitCardPayment.swipeCard(card2);
     }
 
      /**
@@ -289,9 +289,6 @@ public class DebitCardPaymentTest {
      */
     @Test (expected = SecurityException.class)
     public void testSwipeCard5() throws Exception {
-        StartSession.endSession(station);
-        SelfCheckoutStationBronze station1 = new SelfCheckoutStationBronze();
-        StartSession.startSession(station1);
         StartSession.getStation().plugIn(PowerGrid.instance());
         StartSession.getStation().turnOn();
         StartSession.getStation().cardReader.enable();

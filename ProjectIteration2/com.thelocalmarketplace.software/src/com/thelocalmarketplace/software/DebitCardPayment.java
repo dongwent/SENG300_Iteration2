@@ -8,6 +8,7 @@ import com.jjjwelectronics.card.AbstractCardReader;
 import com.jjjwelectronics.card.Card;
 import com.jjjwelectronics.card.Card.CardData;
 import com.jjjwelectronics.card.CardReaderListener;
+import com.jjjwelectronics.card.MagneticStripeFailureException;
 import com.thelocalmarketplace.hardware.external.CardIssuer;
 
 import powerutility.NoPowerException;
@@ -61,8 +62,10 @@ public class DebitCardPayment extends AbstractCardReader{
     }
 
     public void swipeCard(Card card) throws IOException {
-        System.out.println("Total price before: " + StartSession.getExpectedPrice());
-        StartSession.getStation().cardReader.swipe(card);
-        System.out.println("Total price after: " + StartSession.getExpectedPrice());
+        try {
+            StartSession.getStation().cardReader.swipe(card);
+        } catch (MagneticStripeFailureException msfe) {
+            swipeCard(card);;
+        }
     }
 }
