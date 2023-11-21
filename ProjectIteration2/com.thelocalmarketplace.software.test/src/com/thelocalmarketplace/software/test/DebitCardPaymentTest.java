@@ -1,3 +1,24 @@
+/**
+ * The DebitCardPaymentTest class contains JUnit tests for the DebitCardPayment class.
+ * It tests various scenarios related to the functionality of the DebitCardPayment class,
+ * including card reader events, card swiping, and transaction authorization.
+ *
+ * Names:
+ * Henry Pham
+ * Dongwen Tian
+ * Kyuyop Park
+ * Mohammad Soomro
+ * Mohammad Mustafa Mehtab
+ * MD SAIF ALDEEN 
+ * 
+ * UCID:
+ * 30147233
+ * 30181813
+ * 10046592
+ * 30130440
+ * 30189394
+ * 30197566
+ */
 package com.thelocalmarketplace.software.test;
 
 import static org.junit.Assert.assertEquals;
