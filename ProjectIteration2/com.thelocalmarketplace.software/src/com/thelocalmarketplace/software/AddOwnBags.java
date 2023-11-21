@@ -4,6 +4,7 @@ import com.jjjwelectronics.*;
 import com.thelocalmarketplace.hardware.*;
 import com.tdc.*;
 import com.thelocalmarketplace.software.StartSession;
+import com.jjjwelectronics.scale.*;
 import com.jjjwelectronics.*;
 
 public class AddOwnBags extends Item {
@@ -16,10 +17,10 @@ public class AddOwnBags extends Item {
     }
 
     public void addownbags(AddOwnBags bag) {
-        StartSession.getExpectedMass().sum(expectedbagWeight);
-        StartSession.updateExpectedMass(StartSession.getExpectedMass().sum(expectedbagWeight));
-        if (StartSession.getStation().baggingArea.getMassLimit().compareTo(StartSession.getExpectedMass()) > 0) {
-            getMass();
+        if (expectedbagWeight.compareTo(this.getMass()) >= 0) {
+            StartSession.getShoppingCart().add(bag);
+            StartSession.updateExpectedWeight(StartSession.getExpectedMass().sum(this.getmass()));
+
         }
     }
 }
