@@ -7,7 +7,6 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-
 import com.jjjwelectronics.Item;
 import com.jjjwelectronics.Mass;
 import com.jjjwelectronics.Numeral;
@@ -25,14 +24,14 @@ import powerutility.PowerGrid;
 public class AddOwnBagsTest extends AddItemViaBarcodeTest {
 
     AddOwnBagsTest useCase;
-	Item bag;
-	
-	// Setting up use cases.
-	@Before
-	public void setUp() {
-		useCase = new AddOwnBagsTest();
-	}
-	
+    Item bag;
+
+    // Setting up use cases.
+    @Before
+    public void setUp() {
+        useCase = new AddOwnBagsTest();
+    }
+
     @Test
     public void testBagsAdded() {
         bag = new Item(34.0);
@@ -40,16 +39,10 @@ public class AddOwnBagsTest extends AddItemViaBarcodeTest {
         assertTrue("place bag in bagging area.", useCase.bagsAdded);
     }
 
-    @Test 
+    @Test
     public void testWeightOverloadException() throws Exception {
         bag = new Bag(444444);
         useCase.WeightDiscrepancy.baggingAreaControl.add(bag);
         useCase.WeightDiscrepancy.baggingAreaControl.getExpectedWeight();
-
-
-    }}
-
-
-
-
-    
+    }
+}
