@@ -21,7 +21,7 @@ public class AddOwnBags extends Item {
     public void addownbags(AddOwnBags bag) {
         if (expectedbagWeight.compareTo(this.getMass()) >= 0) {
             StartSession.getShoppingCart().add(bag);
-            StartSession.updateExpectedWeight(StartSession.getExpectedMass().sum(this.getmass()));
+            StartSession.updateExpectedMass(StartSession.getExpectedMass().sum(this.getmass()));
 
         }
     }
