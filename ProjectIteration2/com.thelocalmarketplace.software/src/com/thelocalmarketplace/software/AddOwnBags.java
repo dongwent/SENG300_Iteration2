@@ -9,18 +9,34 @@ import com.thelocalmarketplace.software.StartSession;
 import com.jjjwelectronics.scale.*;
 import com.jjjwelectronics.*;
 
+/**
+ * A class that allows the user to add a bag object
+ * 
+ * @author Dongwen Tian
+ *
+ */
 public class AddOwnBags extends Item {
 
-    Mass expectedbagWeight;
+    private static Mass maxBagMass;
+    
+    private long price;
 
-    protected AddOwnBags(Mass mass) {
+    public AddOwnBags(Mass mass) {
         super(mass);
-        // TODO Auto-generated constructor stub
+        price = 0;
+    }
+    
+    public long getPrice() {
+    	return price;
+    }
+    
+    public static void setMaxBagMass(Mass max) {
+    	maxBagMass = max;
     }
 
-    public void addownbags(AddOwnBags bag) {
-        if (expectedbagWeight.compareTo(this.getMass()) >= 0) {
-            StartSession.getShoppingCart().add(bag);
+    public void addOwnBag() {
+        if (maxBagMass.compareTo(this.getMass()) >= 0) {
+            StartSession.getShoppingCart().add(this);
             StartSession.updateExpectedMass(StartSession.getExpectedMass().sum(this.getMass()));
 
         }
